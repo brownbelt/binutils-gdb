@@ -2738,6 +2738,10 @@ fragment <<EOF
 	link_info.relro = TRUE;
       else if (strcmp (optarg, "norelro") == 0)
 	link_info.relro = FALSE;
+      else if (strcmp (optarg, "readonly") == 0)
+	link_info.readonly = TRUE;
+      else if (strcmp (optarg, "noreadonly") == 0)
+	link_info.readonly = FALSE;
       else if (strcmp (optarg, "common") == 0)
 	link_info.elf_stt_common = elf_stt_common;
       else if (strcmp (optarg, "nocommon") == 0)
