@@ -2431,15 +2431,30 @@ fragment <<EOF
 	   && link_info.combreloc
 	   && link_info.relro
 	   && (link_info.flags & DF_BIND_NOW))
-    return "ldscripts/${EMULATION_NAME}.xdw";
+    {
+      if (link_info.readonly)
+	return "ldscripts/${EMULATION_NAME}.xdwe";
+      else
+	return "ldscripts/${EMULATION_NAME}.xdw";
+    }
   else if (bfd_link_pie (&link_info)
 	   && link_info.combreloc)
-    return "ldscripts/${EMULATION_NAME}.xdc";
+    {
+      if (link_info.readonly)
+	return "ldscripts/${EMULATION_NAME}.xdce";
+      else
+	return "ldscripts/${EMULATION_NAME}.xdc";
+    }
 EOF
 fi
 fragment <<EOF
   else if (bfd_link_pie (&link_info))
-    return "ldscripts/${EMULATION_NAME}.xd";
+    {
+      if (link_info.readonly)
+	return "ldscripts/${EMULATION_NAME}.xde";
+      else
+	return "ldscripts/${EMULATION_NAME}.xd";
+    }
 EOF
 fi
 if test -n "$GENERATE_SHLIB_SCRIPT" ; then
@@ -2447,28 +2462,58 @@ if test -n "$GENERATE_COMBRELOC_SCRIPT" ; then
 fragment <<EOF
   else if (bfd_link_dll (&link_info) && link_info.combreloc
 	   && link_info.relro && (link_info.flags & DF_BIND_NOW))
-    return "ldscripts/${EMULATION_NAME}.xsw";
+    {
+      if (link_info.readonly)
+	return "ldscripts/${EMULATION_NAME}.xswe";
+      else
+	return "ldscripts/${EMULATION_NAME}.xsw";
+    }
   else if (bfd_link_dll (&link_info) && link_info.combreloc)
-    return "ldscripts/${EMULATION_NAME}.xsc";
+    {
+      if (link_info.readonly)
+	return "ldscripts/${EMULATION_NAME}.xsce";
+      else
+	return "ldscripts/${EMULATION_NAME}.xsc";
+    }
 EOF
 fi
 fragment <<EOF
   else if (bfd_link_dll (&link_info))
-    return "ldscripts/${EMULATION_NAME}.xs";
+    {
+      if (link_info.readonly)
+	return "ldscripts/${EMULATION_NAME}.xse";
+      else
+	return "ldscripts/${EMULATION_NAME}.xs";
+    }
 EOF
 fi
 if test -n "$GENERATE_COMBRELOC_SCRIPT" ; then
 fragment <<EOF
   else if (link_info.combreloc && link_info.relro
 	   && (link_info.flags & DF_BIND_NOW))
-    return "ldscripts/${EMULATION_NAME}.xw";
+    {
+      if (link_info.readonly)
+	return "ldscripts/${EMULATION_NAME}.xwe";
+      else
+	return "ldscripts/${EMULATION_NAME}.xw";
+    }
   else if (link_info.combreloc)
-    return "ldscripts/${EMULATION_NAME}.xc";
+    {
+      if (link_info.readonly)
+	return "ldscripts/${EMULATION_NAME}.xce";
+      else
+	return "ldscripts/${EMULATION_NAME}.xc";
+    }
 EOF
 fi
 fragment <<EOF
   else
-    return "ldscripts/${EMULATION_NAME}.x";
+    {
+      if (link_info.readonly)
+	return "ldscripts/${EMULATION_NAME}.xe";
+      else
+	return "ldscripts/${EMULATION_NAME}.x";
+    }
 }
 
 EOF
