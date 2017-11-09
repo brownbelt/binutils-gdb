@@ -2368,12 +2368,25 @@ if test -n "$GENERATE_COMBRELOC_SCRIPT" ; then
 echo '  ; else if (bfd_link_pie (&link_info)'		>> e${EMULATION_NAME}.c
 echo '             && link_info.combreloc'		>> e${EMULATION_NAME}.c
 echo '             && link_info.relro'			>> e${EMULATION_NAME}.c
+echo '             && link_info.readonly'		>> e${EMULATION_NAME}.c
+echo '             && (link_info.flags & DF_BIND_NOW)) return' >> e${EMULATION_NAME}.c
+sed $sc ldscripts/${EMULATION_NAME}.xdwe		>> e${EMULATION_NAME}.c
+echo '  ; else if (bfd_link_pie (&link_info)'		>> e${EMULATION_NAME}.c
+echo '             && link_info.combreloc'		>> e${EMULATION_NAME}.c
+echo '             && link_info.relro'			>> e${EMULATION_NAME}.c
 echo '             && (link_info.flags & DF_BIND_NOW)) return' >> e${EMULATION_NAME}.c
 sed $sc ldscripts/${EMULATION_NAME}.xdw			>> e${EMULATION_NAME}.c
+echo '  ; else if (bfd_link_pie (&link_info)'		>> e${EMULATION_NAME}.c
+echo '             && link_info.readonly'		>> e${EMULATION_NAME}.c
+echo '             && link_info.combreloc) return'	>> e${EMULATION_NAME}.c
+sed $sc ldscripts/${EMULATION_NAME}.xdce		>> e${EMULATION_NAME}.c
 echo '  ; else if (bfd_link_pie (&link_info)'		>> e${EMULATION_NAME}.c
 echo '             && link_info.combreloc) return'	>> e${EMULATION_NAME}.c
 sed $sc ldscripts/${EMULATION_NAME}.xdc			>> e${EMULATION_NAME}.c
 fi
+echo '  ; else if (bfd_link_pie (&link_info)'		>> e${EMULATION_NAME}.c
+echo '             && link_info.readonly) return'	>> e${EMULATION_NAME}.c
+sed $sc ldscripts/${EMULATION_NAME}.xde			>> e${EMULATION_NAME}.c
 echo '  ; else if (bfd_link_pie (&link_info)) return'	>> e${EMULATION_NAME}.c
 sed $sc ldscripts/${EMULATION_NAME}.xd			>> e${EMULATION_NAME}.c
 fi
@@ -2382,23 +2395,46 @@ if test -n "$GENERATE_COMBRELOC_SCRIPT" ; then
 echo '  ; else if (bfd_link_dll (&link_info)'		>> e${EMULATION_NAME}.c
 echo '             && link_info.combreloc'		>> e${EMULATION_NAME}.c
 echo '             && link_info.relro'			>> e${EMULATION_NAME}.c
+echo '             && link_info.readonly'		>> e${EMULATION_NAME}.c
+echo '             && (link_info.flags & DF_BIND_NOW)) return' >> e${EMULATION_NAME}.c
+sed $sc ldscripts/${EMULATION_NAME}.xswe		>> e${EMULATION_NAME}.c
+echo '  ; else if (bfd_link_dll (&link_info)'		>> e${EMULATION_NAME}.c
+echo '             && link_info.combreloc'		>> e${EMULATION_NAME}.c
+echo '             && link_info.relro'			>> e${EMULATION_NAME}.c
 echo '             && (link_info.flags & DF_BIND_NOW)) return' >> e${EMULATION_NAME}.c
 sed $sc ldscripts/${EMULATION_NAME}.xsw			>> e${EMULATION_NAME}.c
+echo '  ; else if (bfd_link_dll (&link_info)'		>> e${EMULATION_NAME}.c
+echo '             && link_info.combreloc'		>> e${EMULATION_NAME}.c
+echo '             && link_info.readonly) return'	>> e${EMULATION_NAME}.c
+sed $sc ldscripts/${EMULATION_NAME}.xsce			>> e${EMULATION_NAME}.c
 echo '  ; else if (bfd_link_dll (&link_info)'		>> e${EMULATION_NAME}.c
 echo '             && link_info.combreloc) return'	>> e${EMULATION_NAME}.c
 sed $sc ldscripts/${EMULATION_NAME}.xsc			>> e${EMULATION_NAME}.c
 fi
+echo '  ; else if (bfd_link_dll (&link_info)'		>> e${EMULATION_NAME}.c
+echo '             && link_info.readonly) return'	>> e${EMULATION_NAME}.c
+sed $sc ldscripts/${EMULATION_NAME}.xse			>> e${EMULATION_NAME}.c
 echo '  ; else if (bfd_link_dll (&link_info)) return'	>> e${EMULATION_NAME}.c
 sed $sc ldscripts/${EMULATION_NAME}.xs			>> e${EMULATION_NAME}.c
 fi
 if test -n "$GENERATE_COMBRELOC_SCRIPT" ; then
 echo '  ; else if (link_info.combreloc'			>> e${EMULATION_NAME}.c
 echo '             && link_info.relro'			>> e${EMULATION_NAME}.c
+echo '             && link_info.readonly'		>> e${EMULATION_NAME}.c
+echo '             && (link_info.flags & DF_BIND_NOW)) return' >> e${EMULATION_NAME}.c
+sed $sc ldscripts/${EMULATION_NAME}.xwe			>> e${EMULATION_NAME}.c
+echo '  ; else if (link_info.combreloc'			>> e${EMULATION_NAME}.c
+echo '             && link_info.relro'			>> e${EMULATION_NAME}.c
 echo '             && (link_info.flags & DF_BIND_NOW)) return' >> e${EMULATION_NAME}.c
 sed $sc ldscripts/${EMULATION_NAME}.xw			>> e${EMULATION_NAME}.c
+echo '  ; else if (link_info.combreloc'			>> e${EMULATION_NAME}.c
+echo '             && link_info.readonly) return'	>> e${EMULATION_NAME}.c
+sed $sc ldscripts/${EMULATION_NAME}.xce			>> e${EMULATION_NAME}.c
 echo '  ; else if (link_info.combreloc) return'		>> e${EMULATION_NAME}.c
 sed $sc ldscripts/${EMULATION_NAME}.xc			>> e${EMULATION_NAME}.c
 fi
+echo '  ; else if (link_info.readonly) return'		>> e${EMULATION_NAME}.c
+sed $sc ldscripts/${EMULATION_NAME}.xe			>> e${EMULATION_NAME}.c
 echo '  ; else return'					>> e${EMULATION_NAME}.c
 sed $sc ldscripts/${EMULATION_NAME}.x			>> e${EMULATION_NAME}.c
 echo '; }'						>> e${EMULATION_NAME}.c
