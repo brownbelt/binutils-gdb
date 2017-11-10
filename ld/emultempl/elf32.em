@@ -127,6 +127,15 @@ gld${EMULATION_NAME}_after_parse (void)
 	einfo (_("%P: warning: -z dynamic-undefined-weak ignored\n"));
       link_info.dynamic_undefined_weak = 0;
     }
+
+  if (!bfd_link_relocatable (&link_info)
+      && link_info.readonly
+      && !link_info.relro)
+    {
+      einfo (_("%P: warning: -z norelro is ignored due to -z norelro\n"));
+      link_info.relro = TRUE;
+    }
+
   after_parse_default ();
 }
 
