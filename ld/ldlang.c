@@ -3891,6 +3891,7 @@ strip_excluded_output_sections (void)
     {
       expld.phase = lang_mark_phase_enum;
       expld.dataseg.phase = exp_seg_none;
+      expld.textseg.phase = exp_seg_none;
       one_lang_size_sections_pass (NULL, FALSE);
       lang_reset_memory_regions ();
     }
@@ -5656,8 +5657,22 @@ static bfd_boolean
 lang_size_relro_segment (bfd_boolean *relax, bfd_boolean check_regions)
 {
   bfd_boolean do_reset = FALSE;
+  bfd_boolean do_text_relro;
   bfd_boolean do_data_relro;
+  bfd_vma text_initial_base, text_relro_end;
   bfd_vma data_initial_base, data_relro_end;
+
+  if (link_info.readonly && expld.textseg.relro_end)
+    {
+      do_text_relro = TRUE;
+      text_initial_base = expld.textseg.base;
+      text_relro_end = lang_size_relro_segment_1 (&expld.textseg);
+    }
+  else
+    {
+      do_text_relro = FALSE;
+      text_initial_base = text_relro_end = 0;
+    }
 
   if (link_info.relro && expld.dataseg.relro_end)
     {
@@ -5671,19 +5686,28 @@ lang_size_relro_segment (bfd_boolean *relax, bfd_boolean check_regions)
       data_initial_base = data_relro_end = 0;
     }
 
-  if (do_data_relro)
+  if (do_text_relro || do_data_relro)
     {
       lang_reset_memory_regions ();
       one_lang_size_sections_pass (relax, check_regions);
 
       /* Assignments to dot, or to output section address in a user
 	 script have increased padding over the original.  Revert.  */
+      if (do_text_relro && expld.textseg.relro_end > text_relro_end)
+	{
+	  expld.textseg.base = text_initial_base;
+	  do_reset = TRUE;
+	}
+
       if (do_data_relro && expld.dataseg.relro_end > data_relro_end)
 	{
 	  expld.dataseg.base = data_initial_base;;
 	  do_reset = TRUE;
 	}
     }
+
+  if (!do_text_relro && lang_size_segment_1 (&expld.textseg))
+    do_reset = TRUE;
 
   if (!do_data_relro && lang_size_segment_1 (&expld.dataseg))
     do_reset = TRUE;
@@ -5696,13 +5720,17 @@ lang_size_sections (bfd_boolean *relax, bfd_boolean check_regions)
 {
   expld.phase = lang_allocating_phase_enum;
   expld.dataseg.phase = exp_seg_none;
+  expld.textseg.phase = exp_seg_none;
 
   one_lang_size_sections_pass (relax, check_regions);
 
+  if (expld.textseg.phase != exp_seg_end_seen)
+    expld.textseg.phase = exp_seg_done;
   if (expld.dataseg.phase != exp_seg_end_seen)
     expld.dataseg.phase = exp_seg_done;
 
-  if (expld.dataseg.phase == exp_seg_end_seen)
+  if (expld.textseg.phase == exp_seg_end_seen
+      || expld.dataseg.phase == exp_seg_end_seen)
     {
       bfd_boolean do_reset
 	= lang_size_relro_segment (relax, check_regions);
@@ -5711,6 +5739,12 @@ lang_size_sections (bfd_boolean *relax, bfd_boolean check_regions)
 	{
 	  lang_reset_memory_regions ();
 	  one_lang_size_sections_pass (relax, check_regions);
+	}
+
+      if (link_info.readonly && expld.textseg.relro_end)
+	{
+	  link_info.text_start = expld.textseg.base;
+	  link_info.text_end = expld.textseg.relro_end;
 	}
 
       if (link_info.relro && expld.dataseg.relro_end)
